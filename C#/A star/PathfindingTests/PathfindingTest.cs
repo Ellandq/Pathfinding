@@ -6,7 +6,7 @@ public class Tests
 
     private Random random = new Random();
     
-    private const int WALKABLE_RATE = 70;
+    private const int WALKABLE_RATE = 80;
     private const bool SHOW_PATH = false;
 
     private int startPosX;
@@ -15,31 +15,31 @@ public class Tests
     private int endPosY;
     
     [Test]
-    public void PathfindingRandomTest_50x50()
+    public void PathfindingRandomTest_AStar_50x50()
     {
         MeasurePathfindingPerformance(50);
     }
 
     [Test]
-    public void PathfindingRandomTest_150x150()
+    public void PathfindingRandomTest_AStar_150x150()
     {
         MeasurePathfindingPerformance(150);
     }
 
     [Test]
-    public void PathfindingRandomTest_250x250()
+    public void PathfindingRandomTest_AStar_250x250()
     {
         MeasurePathfindingPerformance(250);
     }
 
     [Test]
-    public void PathfindingRandomTest_500x500()
+    public void PathfindingRandomTest_AStar_500x500()
     {
         MeasurePathfindingPerformance(500);
     }
     
     [Test]
-    public void PathfindingRandomTest_1000x1000()
+    public void PathfindingRandomTest_AStar_1000x1000()
     {
         MeasurePathfindingPerformance(1000);
     }
@@ -47,7 +47,7 @@ public class Tests
     private void MeasurePathfindingPerformance(int gridSize)
     {
         PathNodeType[,] nodeGrid = new PathNodeType[gridSize, gridSize];
-        Pathfinding<PathNodeType> pathfinding =  new Pathfinding<PathNodeType>(nodeGrid);
+        AStar<PathNodeType> aStar =  new AStar<PathNodeType>(nodeGrid);
 
         do
         {
@@ -61,22 +61,17 @@ public class Tests
         Console.WriteLine($"End Position: ({endPosX}, {endPosY})");
 
         PopulateGrid(nodeGrid, startPosX, startPosY, endPosX, endPosY);
-
-        List<long> elapsedTimes = new List<long>();
+        
         List<PathNodeType> path = null;
 
-        for (int i = 0; i < 10; i++) // Run the test 10 times
-        {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            path = pathfinding.FindPath(startPosX, startPosY, endPosX, endPosY);
-            stopwatch.Stop();
+        
+        Stopwatch stopwatch = Stopwatch.StartNew();
+        path = aStar.FindPath(startPosX, startPosY, endPosX, endPosY);
+        stopwatch.Stop();
+        
+        double milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
 
-            elapsedTimes.Add(stopwatch.ElapsedTicks);
-        }
-
-        double averageMilliseconds = elapsedTimes.Average() * 1000.0 / Stopwatch.Frequency;
-
-        Assert.Greater(pathfinding.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
+        Assert.Greater(aStar.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
 
         if (path != null)
         {
@@ -84,6 +79,8 @@ public class Tests
             {
                 Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
             }
+            
+            
 
             if (SHOW_PATH)
             {
@@ -99,9 +96,9 @@ public class Tests
             Console.WriteLine("Path was not found.");
         }
 
-        Console.WriteLine($"Number of Nodes checked: {pathfinding.CheckedNodeCounter}");
+        Console.WriteLine($"Number of Nodes checked: {aStar.CheckedNodeCounter}");
 
-        Console.WriteLine($"Average Elapsed Time: {averageMilliseconds} ms");
+        Console.WriteLine($"Elapsed Time: {milliseconds} ms");
     }
 
     
