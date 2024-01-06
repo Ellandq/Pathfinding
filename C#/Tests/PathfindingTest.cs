@@ -14,6 +14,8 @@ public class Tests
     private int startPosY;
     private int endPosX;
     private int endPosY;
+    
+    private string saveName;
 
     #region AStar Tests
 
@@ -21,6 +23,7 @@ public class Tests
     public void PathfindingRandomTest_AStar_50x50()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+        saveName = "50x50_AStar";
         MeasurePathfindingPerformance(50);
     }
 
@@ -28,6 +31,7 @@ public class Tests
     public void PathfindingRandomTest_AStar_150x150()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+        saveName = "150x150_AStar";
         MeasurePathfindingPerformance(150);
     }
 
@@ -35,6 +39,7 @@ public class Tests
     public void PathfindingRandomTest_AStar_250x250()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+        saveName = "250x250_AStar";
         MeasurePathfindingPerformance(250);
     }
 
@@ -42,15 +47,9 @@ public class Tests
     public void PathfindingRandomTest_AStar_500x500()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+        saveName = "500x500_AStar";
         MeasurePathfindingPerformance(500);
     }
-    
-    // [Test]
-    // public void PathfindingRandomTest_AStar_1000x1000()
-    // {
-    //     SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
-    //     MeasurePathfindingPerformance(1000);
-    // }
 
     #endregion
     
@@ -60,6 +59,7 @@ public class Tests
     public void PathfindingRandomTest_Djikstra_50x50()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        saveName = "50x50_Djikstra";
         MeasurePathfindingPerformance(50);
     }
 
@@ -67,6 +67,7 @@ public class Tests
     public void PathfindingRandomTest_Djikstra_150x150()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        saveName = "150x150_Djikstra";
         MeasurePathfindingPerformance(150);
     }
 
@@ -74,22 +75,9 @@ public class Tests
     public void PathfindingRandomTest_Djikstra_250x250()
     {
         SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        saveName = "250x250_Djikstra";
         MeasurePathfindingPerformance(250);
     }
-
-    [Test]
-    public void PathfindingRandomTest_Djikstra_500x500()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-        MeasurePathfindingPerformance(500);
-    }
-    
-    // [Test]
-    // public void PathfindingRandomTest_Djikstra_1000x1000()
-    // {
-    //     SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-    //     MeasurePathfindingPerformance(1000);
-    // }
 
     #endregion
 
@@ -128,7 +116,7 @@ public class Tests
 
             if (VISUALIZE_PATH)
             {
-                PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, path);
+                PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, path, saveName);
             }
         }
         else

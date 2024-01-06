@@ -20,23 +20,24 @@ public class PathVisualizer<T> where T : PathNode
 
         // Scaling factor for each node
         int scale = 10;
+        
+        string currentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
 
-        // Get the current directory of the application
-        string currentDirectory = Environment.CurrentDirectory;
+        string projectDirectory = Path.Combine(currentDirectory, "Visualisations");
 
-        // Create a path to the Visualization folder in the root directory
-        string visualizationFolderPath = Path.Combine(currentDirectory, "Visualization");
-
-        // Create the Visualization folder if it doesn't exist
-        if (!Directory.Exists(visualizationFolderPath))
+        if (!Directory.Exists(projectDirectory))
         {
-            Directory.CreateDirectory(visualizationFolderPath);
+            Directory.CreateDirectory(projectDirectory);
+            Directory.CreateDirectory(Path.Combine(projectDirectory, "50x50"));
+            Directory.CreateDirectory(Path.Combine(projectDirectory, "150x150"));
+            Directory.CreateDirectory(Path.Combine(projectDirectory, "250x250"));
+            Directory.CreateDirectory(Path.Combine(projectDirectory, "500x500"));
         }
-
-        // Create image
+        
         long ticks = DateTime.Now.Ticks;
-        string imagePath = Path.Combine(visualizationFolderPath, $"path_visualization_{msg}_{ticks}.jpg");
-
+        int size = grid.GetLength(0);
+        string imagePath = Path.Combine(projectDirectory, $"{size}x{size}", $"path_visualization_{msg}_{ticks}.jpg");
+        
         using (Bitmap bitmap = new Bitmap(cols * scale, rows * scale))
         {
             using (Graphics g = Graphics.FromImage(bitmap))
@@ -56,7 +57,6 @@ public class PathVisualizer<T> where T : PathNode
                     Color pixelColor = i == 0 ? START : i == path.Count - 1 ? END : PATH;
                     SolidBrush brush = new SolidBrush(pixelColor);
                     g.FillRectangle(brush, path[i].gridPosX * scale, path[i].gridPosY * scale, scale, scale);
-                    // Console.WriteLine($"({path[i].gridPosX}, {path[i].gridPosY})");
                 }
             }
 
