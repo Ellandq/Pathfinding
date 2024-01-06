@@ -11,10 +11,25 @@ public class Pathfinding<T> where T : PathNode
     
     public static Pathfinding<T> Instance { get; internal set; }
     
+    public int CheckedNodeCounter { get; protected set; }
+    
     public virtual List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
     {
         Console.WriteLine("Pathfinding algorithm not chosen.");
         return null;
+    }
+    
+    protected void InitializeNodes(T[,] nodeGrid)
+    {
+        this.nodeGrid = nodeGrid;
+        
+        for (int x = 0; x < nodeGrid.GetLength(0); x++)
+        {
+            for (int y = 0; y < nodeGrid.GetLength(1); y++)
+            {
+                this.nodeGrid[x, y].Initialize(x, y);
+            }
+        }
     }
     
     protected List <T> GetNeighbourList(T currentNode)
@@ -71,19 +86,5 @@ public class Pathfinding<T> where T : PathNode
         int yDistance = Math.Abs(a.Item2 - b.Item2);
         int remaining = Math.Abs(xDistance - yDistance);
         return MOVE_DIAGONAL_COST * Math.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
-    }
-    
-    protected T GetLowestFCostNode (List<T> pathNodeList)
-    {
-        T lowestFCostNode = pathNodeList[0];
-        
-        for (int i = 1; i < pathNodeList.Count; i++)
-        {
-            if (pathNodeList[i].fCost < lowestFCostNode.fCost)
-            {
-                lowestFCostNode = pathNodeList[i];
-            }
-        }
-        return lowestFCostNode;
     }
 }

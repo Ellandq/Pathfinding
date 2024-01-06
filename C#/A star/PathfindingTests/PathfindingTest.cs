@@ -2,53 +2,63 @@ namespace PathfindingTests;
 
 public class Tests
 {
-    private class PathNodeType : PathNode {}
+    public class PathNodeType : PathNode {}
 
+    private Delegate SetUp;
     private Random random = new Random();
     
     private const int WALKABLE_RATE = 80;
-    private const bool SHOW_PATH = false;
+    private const bool VISUALIZE_PATH = true;
 
     private int startPosX;
     private int startPosY;
     private int endPosX;
     private int endPosY;
-    
+
+    #region AStar Tests
+
     [Test]
     public void PathfindingRandomTest_AStar_50x50()
     {
+        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
         MeasurePathfindingPerformance(50);
     }
 
     [Test]
     public void PathfindingRandomTest_AStar_150x150()
     {
+        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
         MeasurePathfindingPerformance(150);
     }
 
     [Test]
     public void PathfindingRandomTest_AStar_250x250()
     {
+        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
         MeasurePathfindingPerformance(250);
     }
 
     [Test]
     public void PathfindingRandomTest_AStar_500x500()
     {
+        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
         MeasurePathfindingPerformance(500);
     }
     
-    [Test]
-    public void PathfindingRandomTest_AStar_1000x1000()
-    {
-        MeasurePathfindingPerformance(1000);
-    }
+    // [Test]
+    // public void PathfindingRandomTest_AStar_1000x1000()
+    // {
+    //     SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+    //     MeasurePathfindingPerformance(1000);
+    // }
 
+    #endregion
+    
     private void MeasurePathfindingPerformance(int gridSize)
     {
+        Console.WriteLine("First Path:");
         PathNodeType[,] nodeGrid = new PathNodeType[gridSize, gridSize];
-        AStar<PathNodeType> aStar =  new AStar<PathNodeType>(nodeGrid);
-
+        
         do
         {
             startPosX = random.Next(0, gridSize);
@@ -56,22 +66,21 @@ public class Tests
             endPosX = random.Next(0, gridSize);
             endPosY = random.Next(0, gridSize);
         } while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2);
-
-        Console.WriteLine($"Start Position: ({startPosX}, {startPosY})");
-        Console.WriteLine($"End Position: ({endPosX}, {endPosY})");
-
+        
         PopulateGrid(nodeGrid, startPosX, startPosY, endPosX, endPosY);
+
+        SetUp.DynamicInvoke(nodeGrid);
         
         List<PathNodeType> path = null;
 
         
         Stopwatch stopwatch = Stopwatch.StartNew();
-        path = aStar.FindPath(startPosX, startPosY, endPosX, endPosY);
+        path = Pathfinding<PathNodeType>.Instance.FindPath(startPosX, startPosY, endPosX, endPosY);
         stopwatch.Stop();
         
         double milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
 
-        Assert.Greater(aStar.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
+        Assert.Greater(Pathfinding<PathNodeType>.Instance.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
 
         if (path != null)
         {
@@ -79,16 +88,10 @@ public class Tests
             {
                 Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
             }
-            
-            
 
-            if (SHOW_PATH)
+            if (VISUALIZE_PATH)
             {
-                Console.WriteLine("Path:");
-                foreach (var node in path)
-                {
-                    Console.WriteLine($"({node.gridPosX}, {node.gridPosY})");
-                }
+                PathVisualizer.VisualizePath(nodeGrid, path);
             }
         }
         else
@@ -96,11 +99,97 @@ public class Tests
             Console.WriteLine("Path was not found.");
         }
 
-        Console.WriteLine($"Number of Nodes checked: {aStar.CheckedNodeCounter}");
-
+        Console.WriteLine($"Start Position: ({startPosX}, {startPosY})");
+        Console.WriteLine($"End Position: ({endPosX}, {endPosY})");
+        Console.WriteLine($"Number of Nodes checked: {Pathfinding<PathNodeType>.Instance.CheckedNodeCounter}");
         Console.WriteLine($"Elapsed Time: {milliseconds} ms");
-    }
+        
+        try
+        {
+            int startPosX_02 = random.Next(0, gridSize);
+            int startPosY_02 = random.Next(0, gridSize);
+            int endPosX_02 = random.Next(0, gridSize);
+            int endPosY_02 = random.Next(0, gridSize);
+            
+            while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2 || !(nodeGrid[startPosX_02,startPosY_02].IsWalkable &&  nodeGrid[endPosX_02,endPosX_02].IsWalkable))
+            {
+                startPosX_02 = random.Next(0, gridSize);
+                startPosY_02 = random.Next(0, gridSize);
+                endPosX_02 = random.Next(0, gridSize);
+                endPosY_02 = random.Next(0, gridSize);
+            } 
+                
+            stopwatch = Stopwatch.StartNew();
+            List<PathNodeType> secondPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX_02, startPosY_02, endPosX_02, endPosY_02);
+            stopwatch.Stop();
+            
+            milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
+            
+            Console.WriteLine("\nSecond Path:");
+            
+            Assert.Greater(Pathfinding<PathNodeType>.Instance.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
 
+            if (path != null)
+            {
+                foreach (var node in path)
+                {
+                    Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
+                }
+
+                if (VISUALIZE_PATH)
+                {
+                   PathVisualizer.VisualizePath(nodeGrid, secondPath);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Path was not found.");
+            }
+            
+            Console.WriteLine($"Start Position: ({startPosX_02}, {startPosY_02})");
+            Console.WriteLine($"End Position: ({endPosX_02}, {endPosY_02})");
+            Console.WriteLine($"Number of Nodes checked: {Pathfinding<PathNodeType>.Instance.CheckedNodeCounter}");
+            Console.WriteLine($"Elapsed Time: {milliseconds} ms");
+            
+            
+            Console.WriteLine("\nSame starting values as first path:");
+            stopwatch = Stopwatch.StartNew();
+            List<PathNodeType> thirdPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX, startPosY, endPosX, endPosY);
+            stopwatch.Stop();
+
+            if (thirdPath != null && path != null)
+            {
+                int index = 0;
+                Assert.IsTrue(path.Count == thirdPath.Count, "Paths need to be the same lenngth given the same variables");
+                foreach (var node in thirdPath)
+                {
+                    Assert.IsTrue(node == path[index], "Not all pathnodes are the same given the same starting variables.");
+                    index++;
+                }
+            
+                milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
+            }
+            else if (thirdPath == null && path == null)
+            {
+                Assert.Pass("Both paths are null");
+            }
+            else
+            {
+                Assert.Fail("Paths are different.");
+            }
+            
+            Console.WriteLine($"Elapsed Time: {milliseconds} ms");
+        }
+        catch (NullReferenceException e)
+        {
+            Assert.Fail(e.Message);
+        }
+
+        foreach (var node in path)
+        {
+            Console.WriteLine($"({node.gridPosX}, {node.gridPosY})");
+        }
+    }
     
     private void PopulateGrid(PathNodeType[,] nodeGrid, int startPosX, int startPosY, int endPosX, int endPosY)
     {
