@@ -21,7 +21,7 @@ public class PathVisualizer<T> where T : PathNode
         // Scaling factor for each node
         int scale = 10;
         
-        string currentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName;
+        string currentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
 
         string projectDirectory = Path.Combine(currentDirectory, "Visualisations");
 
@@ -36,7 +36,7 @@ public class PathVisualizer<T> where T : PathNode
         
         long ticks = DateTime.Now.Ticks;
         int size = grid.GetLength(0);
-        string imagePath = Path.Combine(projectDirectory, $"{size}x{size}", $"path_visualization_{msg}_{ticks}.jpg");
+        string imagePath = Path.Combine(projectDirectory, $"{size}x{size}", $"C#_path_visualization_{msg}_{ticks}.jpg");
         
         using (Bitmap bitmap = new Bitmap(cols * scale, rows * scale))
         {
