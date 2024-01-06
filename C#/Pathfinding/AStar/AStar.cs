@@ -3,16 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace Pathfinding;
+namespace Pathfinding.AStar;
 
-public class Djikstra<T> : Pathfinding<T> where T : PathNode
+public class AStar<T> : Pathfinding<T> where T : PathNode
 {
-    public int CheckedNodeCounter { get; private set; }
-    
-    public Djikstra(T[,] nodeGrid)
+    public AStar(T[,] nodeGrid)
     {
         Instance = this;
-        this.nodeGrid = nodeGrid;
+        InitializeNodes(nodeGrid);
     }
 
     public override List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
@@ -23,14 +21,7 @@ public class Djikstra<T> : Pathfinding<T> where T : PathNode
         
         List<T> openList = new List<T> { startNode };
         List<T> closedList = new List<T>();
-        
-        for (int x = 0; x < nodeGrid.GetLength(0); x++)
-        {
-            for (int y = 0; y < nodeGrid.GetLength(1); y++)
-            {
-                nodeGrid[x, y].Initialize(x, y);
-            }
-        }
+        List<T> usedList = new List<T>();
         
         startNode.gCost = 0;
         startNode.hCost = CalculateDistanceCost(startNode.gridPosition, endNode.gridPosition);
@@ -41,7 +32,10 @@ public class Djikstra<T> : Pathfinding<T> where T : PathNode
             T node = GetLowestFCostNode(openList);
             
             if (node == endNode){
-                return CalculatePath(endNode);
+                CheckedNodeCounter = closedList.Count;
+                List<T> path = CalculatePath(node);
+                ReinitalizeGrid(usedList);
+                return path;
             }
 
             List<T> neighbourList = GetNeighbourList(node);
@@ -49,14 +43,18 @@ public class Djikstra<T> : Pathfinding<T> where T : PathNode
             if (GetNeighbourList(node).Contains(endNode))
             {
                 CheckedNodeCounter = closedList.Count;
-                return CalculatePath(node);
+                List<T> path = CalculatePath(node);
+                ReinitalizeGrid(usedList);
+                return path;
             }
             
             openList.Remove(node);
             closedList.Add(node);
 
-            foreach (T neighbourNode in neighbourList){
+            foreach (T neighbourNode in neighbourList)
+            {
                 if (closedList.Contains(neighbourNode)) continue;
+                if (!neighbourNode.IsUsable && !usedList.Contains(neighbourNode)) usedList.Add(neighbourNode);
                 if (!neighbourNode.IsWalkable){
                     closedList.Add(neighbourNode);
                     continue;
@@ -72,25 +70,21 @@ public class Djikstra<T> : Pathfinding<T> where T : PathNode
                     if (!openList.Contains(neighbourNode)){
                         openList.Add(neighbourNode);
                     }
+
+                    neighbourNode.IsUsable = false;
+                    usedList.Add(neighbourNode);
                 }
             }
         }
         // Out of nodes on the map
         CheckedNodeCounter = closedList.Count;
+        ReinitalizeGrid(usedList);
         return null;
     }
     
-    private T GetLowestFCostNode (List<T> pathNodeList)
+    private T GetLowestFCostNode(List<T> pathNodeList)
     {
-        T lowestFCostNode = pathNodeList[0];
-        
-        for (int i = 1; i < pathNodeList.Count; i++)
-        {
-            if (pathNodeList[i].fCost < lowestFCostNode.fCost)
-            {
-                lowestFCostNode = pathNodeList[i];
-            }
-        }
-        return lowestFCostNode;
+        return pathNodeList.Where(node => node.IsWalkable).OrderBy(node => node.fCost).FirstOrDefault();
     }
+
 }

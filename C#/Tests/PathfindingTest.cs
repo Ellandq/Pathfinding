@@ -1,4 +1,4 @@
-namespace PathfindingTests;
+namespace Pathfinding.Tests;
 
 public class Tests
 {
@@ -54,6 +54,45 @@ public class Tests
 
     #endregion
     
+    #region Djikstra Tests
+
+    [Test]
+    public void PathfindingRandomTest_Djikstra_50x50()
+    {
+        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        MeasurePathfindingPerformance(50);
+    }
+
+    [Test]
+    public void PathfindingRandomTest_Djikstra_150x150()
+    {
+        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        MeasurePathfindingPerformance(150);
+    }
+
+    [Test]
+    public void PathfindingRandomTest_Djikstra_250x250()
+    {
+        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        MeasurePathfindingPerformance(250);
+    }
+
+    [Test]
+    public void PathfindingRandomTest_Djikstra_500x500()
+    {
+        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+        MeasurePathfindingPerformance(500);
+    }
+    
+    // [Test]
+    // public void PathfindingRandomTest_Djikstra_1000x1000()
+    // {
+    //     SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+    //     MeasurePathfindingPerformance(1000);
+    // }
+
+    #endregion
+
     private void MeasurePathfindingPerformance(int gridSize)
     {
         Console.WriteLine("First Path:");
@@ -89,7 +128,7 @@ public class Tests
 
             if (VISUALIZE_PATH)
             {
-                PathVisualizer.VisualizePath(nodeGrid, path);
+                PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, path);
             }
         }
         else

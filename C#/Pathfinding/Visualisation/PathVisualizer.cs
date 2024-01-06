@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Pathfinding;
 
-namespace PathfindingTests;
+namespace Pathfinding.Visualisation;
 
-public class PathVisualizer
+public class PathVisualizer<T> where T : PathNode
 {
     private static readonly Color BLOCKED = Color.FromArgb(0, 0, 0);      
     private static readonly Color WALKABLE = Color.FromArgb(200, 200, 200);    
@@ -12,7 +13,7 @@ public class PathVisualizer
     private static readonly Color START = Color.FromArgb(128, 0, 128);    
     private static readonly Color END = Color.FromArgb(0, 0, 255);
     
-    public static void VisualizePath(Tests.PathNodeType[,] grid, List<Tests.PathNodeType> path, string msg = "")
+    public static void VisualizePath(T[,] grid, List<T> path, string msg = "")
     {
         int rows = grid.GetLength(0);
         int cols = grid.GetLength(1);
