@@ -21,6 +21,7 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
         
         List<T> openList = new List<T> { startNode };
         List<T> closedList = new List<T>();
+        List<T> usedList = new List<T>();
         
         startNode.gCost = 0;
         startNode.hCost = CalculateDistanceCost(startNode.gridPosition, endNode.gridPosition);
@@ -31,7 +32,10 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
             T node = GetLowestFCostNode(openList);
             
             if (node == endNode){
-                return CalculatePath(endNode);
+                CheckedNodeCounter = closedList.Count;
+                List<T> path = CalculatePath(node);
+                ReinitalizeGrid(usedList);
+                return path;
             }
 
             List<T> neighbourList = GetNeighbourList(node);
@@ -39,7 +43,9 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
             if (GetNeighbourList(node).Contains(endNode))
             {
                 CheckedNodeCounter = closedList.Count;
-                return CalculatePath(node);
+                List<T> path = CalculatePath(node);
+                ReinitalizeGrid(usedList);
+                return path;
             }
             
             openList.Remove(node);
@@ -48,7 +54,7 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
             foreach (T neighbourNode in neighbourList)
             {
                 if (closedList.Contains(neighbourNode)) continue;
-                if (!neighbourNode.IsUsable) neighbourNode.Initialize();
+                if (!neighbourNode.IsUsable && !usedList.Contains(neighbourNode)) usedList.Add(neighbourNode);
                 if (!neighbourNode.IsWalkable){
                     closedList.Add(neighbourNode);
                     continue;
@@ -66,26 +72,19 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
                     }
 
                     neighbourNode.IsUsable = false;
+                    usedList.Add(neighbourNode);
                 }
             }
         }
         // Out of nodes on the map
         CheckedNodeCounter = closedList.Count;
+        ReinitalizeGrid(usedList);
         return null;
     }
     
-    private T GetLowestFCostNode (List<T> pathNodeList)
+    private T GetLowestFCostNode(List<T> pathNodeList)
     {
-        T lowestFCostNode = pathNodeList[0];
-        
-        for (int i = 1; i < pathNodeList.Count; i++)
-        {
-            if (pathNodeList[i].fCost < lowestFCostNode.fCost)
-            {
-                lowestFCostNode = pathNodeList[i];
-            }
-        }
-        
-        return lowestFCostNode;
+        return pathNodeList.Where(node => node.IsWalkable).OrderBy(node => node.fCost).FirstOrDefault();
     }
+
 }

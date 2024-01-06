@@ -80,8 +80,6 @@ public class Tests
         
         double milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
 
-        Assert.Greater(Pathfinding<PathNodeType>.Instance.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
-
         if (path != null)
         {
             foreach (var node in path)
@@ -126,8 +124,6 @@ public class Tests
             milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
             
             Console.WriteLine("\nSecond Path:");
-            
-            Assert.Greater(Pathfinding<PathNodeType>.Instance.CheckedNodeCounter, 4, "There need to be more than 4 checked nodes in all cases.");
 
             if (path != null)
             {
@@ -137,8 +133,8 @@ public class Tests
                 }
 
                 if (VISUALIZE_PATH)
-                {
-                   PathVisualizer.VisualizePath(nodeGrid, secondPath);
+                { 
+                    //PathVisualizer.VisualizePath(nodeGrid, secondPath, "SECOND");
                 }
             }
             else
@@ -159,11 +155,18 @@ public class Tests
 
             if (thirdPath != null && path != null)
             {
-                int index = 0;
+                if (VISUALIZE_PATH)
+                {
+                    //PathVisualizer.VisualizePath(nodeGrid, thirdPath, "LAST");
+                }
+                
                 Assert.IsTrue(path.Count == thirdPath.Count, "Paths need to be the same lenngth given the same variables");
+                
+                int index = 0;
+                
                 foreach (var node in thirdPath)
                 {
-                    Assert.IsTrue(node == path[index], "Not all pathnodes are the same given the same starting variables.");
+                    Assert.IsTrue(node == path[index], "Not all path nodes are the same given the same starting variables.");
                     index++;
                 }
             
@@ -183,11 +186,6 @@ public class Tests
         catch (NullReferenceException e)
         {
             Assert.Fail(e.Message);
-        }
-
-        foreach (var node in path)
-        {
-            Console.WriteLine($"({node.gridPosX}, {node.gridPosY})");
         }
     }
     

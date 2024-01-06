@@ -16,8 +16,8 @@ public class PathNode
     public int fCost = 0; // G cost + H cost
     
     // A public property to set if a given Node should be accessible
-    public bool IsWalkable { get; set; }
-    public bool IsUsable{ get; set; }
+    public bool IsWalkable { get; set; } = true;
+    public bool IsUsable { get; set; } = true;
 
     public void Initialize(int x, int y)
     {

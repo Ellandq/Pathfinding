@@ -12,13 +12,13 @@ public class PathVisualizer
     private static readonly Color START = Color.FromArgb(128, 0, 128);    
     private static readonly Color END = Color.FromArgb(0, 0, 255);
     
-    public static void VisualizePath(Tests.PathNodeType[,] grid, List<Tests.PathNodeType> path)
+    public static void VisualizePath(Tests.PathNodeType[,] grid, List<Tests.PathNodeType> path, string msg = "")
     {
         int rows = grid.GetLength(0);
         int cols = grid.GetLength(1);
 
         // Scaling factor for each node
-        int scale = 5;
+        int scale = 10;
 
         // Get the current directory of the application
         string currentDirectory = Environment.CurrentDirectory;
@@ -34,7 +34,7 @@ public class PathVisualizer
 
         // Create image
         long ticks = DateTime.Now.Ticks;
-        string imagePath = Path.Combine(visualizationFolderPath, $"path_visualization_{ticks}.jpg");
+        string imagePath = Path.Combine(visualizationFolderPath, $"path_visualization_{msg}_{ticks}.jpg");
 
         using (Bitmap bitmap = new Bitmap(cols * scale, rows * scale))
         {

@@ -9,7 +9,7 @@ public class Pathfinding<T> where T : PathNode
     protected const int MOVE_STRAIGHT_COST = 10;
     protected const int MOVE_DIAGONAL_COST = 14;
     
-    public static Pathfinding<T> Instance { get; internal set; }
+    public static Pathfinding<T> Instance { get; protected set; }
     
     public int CheckedNodeCounter { get; protected set; }
     
@@ -86,5 +86,13 @@ public class Pathfinding<T> where T : PathNode
         int yDistance = Math.Abs(a.Item2 - b.Item2);
         int remaining = Math.Abs(xDistance - yDistance);
         return MOVE_DIAGONAL_COST * Math.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
+    }
+
+    protected void ReinitalizeGrid(List<T> used)
+    {
+        foreach (T node in used)
+        {
+            node.Initialize();
+        }
     }
 }
