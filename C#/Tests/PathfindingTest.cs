@@ -184,7 +184,7 @@ public class Tests
             {
                 if (VISUALIZE_PATH)
                 {
-                    //PathVisualizer.VisualizePath(nodeGrid, thirdPath, "LAST");
+                    PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, thirdPath, saveName);
                 }
                 
                 Assert.IsTrue(path.Count == thirdPath.Count, "Paths need to be the same lenngth given the same variables");
