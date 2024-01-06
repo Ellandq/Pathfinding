@@ -32,7 +32,7 @@ public class Pathfinding<T> where T : PathNode
         }
     }
     
-    protected List <T> GetNeighbourList(T currentNode)
+    protected virtual List <T> GetNeighbourList(T currentNode)
     {
         List<T> neighbourList = new List<T>();
 
