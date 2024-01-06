@@ -1,0 +1,16 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4217081b_002Dc390_002D48f7_002D82a6_002D74d2120237c8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PathfindingTest_50x50 #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::C52DFA92-C773-48A5-942C-E7FB5B16B0F3::net7.0::PathfindingTests.Tests.PathfindingTest_50x50&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=b8db694b_002Dd70e_002D4bd4_002Db594_002D5293cc887b87/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="PathfindingTest_50x50 #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::C52DFA92-C773-48A5-942C-E7FB5B16B0F3::net7.0::PathfindingTests.Tests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=d0db14b7_002D793d_002D43cd_002D86fb_002Dae193e13296a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="PathfindingTest_50x50" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::C52DFA92-C773-48A5-942C-E7FB5B16B0F3::net7.0::PathfindingTests.Tests.PathfindingTest_50x50&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
