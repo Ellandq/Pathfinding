@@ -84,8 +84,8 @@ public class Tests
     private void MeasurePathfindingPerformance(int gridSize)
     {
         Console.WriteLine("First Path:");
-        PathNodeType[,] nodeGrid = new PathNodeType[gridSize, gridSize];
-        
+        var nodeGrid = new PathNodeType[gridSize, gridSize];
+    
         do
         {
             startPosX = random.Next(0, gridSize);
@@ -93,38 +93,32 @@ public class Tests
             endPosX = random.Next(0, gridSize);
             endPosY = random.Next(0, gridSize);
         } while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2);
-        
+    
         PopulateGrid(nodeGrid, startPosX, startPosY, endPosX, endPosY);
 
         SetUp.DynamicInvoke(nodeGrid);
-        
+    
         List<PathNodeType> path = null;
 
-        
-        Stopwatch stopwatch = Stopwatch.StartNew();
+    
+        var stopwatch = Stopwatch.StartNew();
         path = Pathfinding<PathNodeType>.Instance.FindPath(startPosX, startPosY, endPosX, endPosY);
         stopwatch.Stop();
-        
-        double milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
+    
+        var milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
 
         if (path != null)
         {
             foreach (var node in path)
             {
-                Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
+                Assert.That(node.IsWalkable, Is.True, "All objects on the path need to be walkable.");
             }
+        }
 
-            if (VISUALIZE_PATH)
-            {
-                PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, path, saveName);
-            }
-        }
-        else
+        if (VISUALIZE_PATH && path != null)
         {
-            Console.WriteLine("Path was not found.");
+            PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, path, saveName);
         }
-        
-        return;
 
         Console.WriteLine($"Start Position: ({startPosX}, {startPosY})");
         Console.WriteLine($"End Position: ({endPosX}, {endPosY})");
@@ -133,10 +127,10 @@ public class Tests
         
         try
         {
-            int startPosX_02 = random.Next(0, gridSize);
-            int startPosY_02 = random.Next(0, gridSize);
-            int endPosX_02 = random.Next(0, gridSize);
-            int endPosY_02 = random.Next(0, gridSize);
+            var startPosX_02 = random.Next(0, gridSize);
+            var startPosY_02 = random.Next(0, gridSize);
+            var endPosX_02 = random.Next(0, gridSize);
+            var endPosY_02 = random.Next(0, gridSize);
             
             while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2 || !(nodeGrid[startPosX_02,startPosY_02].IsWalkable &&  nodeGrid[endPosX_02,endPosX_02].IsWalkable))
             {
@@ -147,25 +141,23 @@ public class Tests
             } 
                 
             stopwatch = Stopwatch.StartNew();
-            List<PathNodeType> secondPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX_02, startPosY_02, endPosX_02, endPosY_02);
+            var secondPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX_02, startPosY_02, endPosX_02, endPosY_02);
             stopwatch.Stop();
             
             milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
             
             Console.WriteLine("\nSecond Path:");
 
-            if (path != null)
+            foreach (var node in secondPath)
             {
-                foreach (var node in path)
-                {
-                    Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Path was not found.");
+                Assert.That(node.IsWalkable, Is.True, "All objects on the path need to be walkable.");
             }
             
+            if (VISUALIZE_PATH)
+            {
+                PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, secondPath, saveName);
+            }
+
             Console.WriteLine($"Start Position: ({startPosX_02}, {startPosY_02})");
             Console.WriteLine($"End Position: ({endPosX_02}, {endPosY_02})");
             Console.WriteLine($"Number of Nodes checked: {Pathfinding<PathNodeType>.Instance.CheckedNodeCounter}");
@@ -174,21 +166,30 @@ public class Tests
             
             Console.WriteLine("\nSame starting values as first path:");
             stopwatch = Stopwatch.StartNew();
-            List<PathNodeType> thirdPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX, startPosY, endPosX, endPosY);
+            var thirdPath = Pathfinding<PathNodeType>.Instance.FindPath(startPosX, startPosY, endPosX, endPosY);
             stopwatch.Stop();
 
             if (thirdPath != null && path != null)
             {
                 
-                Assert.IsTrue(path.Count == thirdPath.Count, "Paths need to be the same lenngth given the same variables");
+                Assert.That(path.Count, Is.EqualTo(thirdPath.Count), "Paths need to be the same lenngth given the same variables");
                 
-                int index = 0;
                 
-                foreach (var node in thirdPath)
+                try
                 {
-                    Assert.IsTrue(node == path[index], "Not all path nodes are the same given the same starting variables.");
-                    index++;
+                    var index = 0;
+                    foreach (var node in thirdPath)
+                    {
+                        Assert.That(node, Is.EqualTo(path[index]),
+                            "Not all path nodes are the same given the same starting variables.");
+                        index++;
+                    }
                 }
+                catch
+                {
+                    PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, thirdPath, "FAILED_" + saveName);
+                }
+                
             
                 milliseconds = stopwatch.ElapsedTicks * 1000.0 / Stopwatch.Frequency;
             }
@@ -205,15 +206,15 @@ public class Tests
         }
         catch (NullReferenceException e)
         {
-            Assert.Fail(e.Message);
+            Assert.Fail("Path is null.");
         }
     }
     
     private void PopulateGrid(PathNodeType[,] nodeGrid, int startPosX, int startPosY, int endPosX, int endPosY)
     {
-        for (int x = 0; x < nodeGrid.GetLength(0); x++)
+        for (var x = 0; x < nodeGrid.GetLength(0); x++)
         {
-            for (int y = 0; y < nodeGrid.GetLength(1); y++)
+            for (var y = 0; y < nodeGrid.GetLength(1); y++)
             {
                 nodeGrid[x, y] = new PathNodeType();
                 if ((x == startPosX && y == startPosY) || (x == endPosX && y == endPosY) || random.Next(0, 100) < WALKABLE_RATE)

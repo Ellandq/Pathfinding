@@ -14,15 +14,15 @@ namespace Pathfinding.Djikstra
         public override List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
         {
             CheckedNodeCounter = 0;
-            T startNode = nodeGrid[startPosX, startPosY];
-            T endNode = nodeGrid[endPosX, endPosY];
+            var startNode = nodeGrid[startPosX, startPosY];
+            var endNode = nodeGrid[endPosX, endPosY];
 
-            List<T> openList = new List<T> { startNode };
-            List<T> closedList = new List<T>();
+            var openList = new HashSet<T> { startNode };
+            var closedList = new HashSet<T>();
 
-            for (int x = 0; x < nodeGrid.GetLength(0); x++)
+            for (var x = 0; x < nodeGrid.GetLength(0); x++)
             {
-                for (int y = 0; y < nodeGrid.GetLength(1); y++)
+                for (var y = 0; y < nodeGrid.GetLength(1); y++)
                 {
                     nodeGrid[x, y].Initialize(x, y);
                 }
@@ -32,7 +32,7 @@ namespace Pathfinding.Djikstra
 
             while (openList.Count > 0)
             {
-                T node = GetLowestGCostNode(openList);
+                var node = GetLowestGCostNode(openList);
                 node.IsChecked = true;
 
                 if (node == endNode)
@@ -40,7 +40,7 @@ namespace Pathfinding.Djikstra
                     return CalculatePath(endNode);
                 }
 
-                List<T> neighbourList = GetNeighbourList(node);
+                var neighbourList = GetNeighbourList(node);
 
                 if (GetNeighbourList(node).Contains(endNode))
                 {
@@ -51,25 +51,22 @@ namespace Pathfinding.Djikstra
                 openList.Remove(node);
                 closedList.Add(node);
 
-                foreach (T neighbourNode in neighbourList)
+                foreach (var neighbourNode in neighbourList)
                 {
-                    if (closedList.Contains(neighbourNode)) continue;
-                    if (!neighbourNode.IsWalkable)
+                    if (!closedList.Contains(neighbourNode))
                     {
-                        closedList.Add(neighbourNode);
-                        continue;
-                    }
+                        if (!neighbourNode.IsWalkable)
+                        {
+                            closedList.Add(neighbourNode);
+                            continue;
+                        }
 
-                    int tentativeGCost = node.gCost + CalculateDistanceCost(node.gridPosition, neighbourNode.gridPosition);
-                    if (tentativeGCost < neighbourNode.gCost)
-                    {
+                        var tentativeGCost = node.gCost + CalculateDistanceCost(node.gridPosition, neighbourNode.gridPosition);
+                        if (tentativeGCost >= neighbourNode.gCost) continue;
                         neighbourNode.cameFromNode = node;
                         neighbourNode.gCost = tentativeGCost;
 
-                        if (!openList.Contains(neighbourNode))
-                        {
-                            openList.Add(neighbourNode);
-                        }
+                        openList.Add(neighbourNode);
                     }
                 }
             }
@@ -78,15 +75,14 @@ namespace Pathfinding.Djikstra
             return null;
         }
 
-        private T GetLowestGCostNode(List<T> pathNodeList)
+        private T GetLowestGCostNode(HashSet<T> pathNodeList)
         {
-            T lowestGCostNode = pathNodeList[0];
-
-            for (int i = 1; i < pathNodeList.Count; i++)
+            T lowestGCostNode = null;
+            foreach (var node in pathNodeList)
             {
-                if (pathNodeList[i].gCost < lowestGCostNode.gCost)
+                if (lowestGCostNode == null || node.gCost < lowestGCostNode.gCost)
                 {
-                    lowestGCostNode = pathNodeList[i];
+                    lowestGCostNode = node;
                 }
             }
             return lowestGCostNode;

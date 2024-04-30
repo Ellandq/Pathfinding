@@ -10,7 +10,7 @@ public class JPS<T> : Pathfinding<T> where T : PathNode
         return base.FindPath(startPosX, startPosY, endPosX, endPosY);
     }
 
-    protected override List<T> GetNeighbourList(T currentNode)
+    protected override HashSet<T> GetNeighbourList(T currentNode)
     {
         // TODO
         return base.GetNeighbourList(currentNode);

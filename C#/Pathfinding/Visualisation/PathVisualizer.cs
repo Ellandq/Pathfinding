@@ -49,6 +49,7 @@ public class PathVisualizer<T> where T : PathNode
                     {
                         var pixelColor = grid[j, i].IsWalkable ? grid[j, i].IsChecked ? CHECKED : WALKABLE : BLOCKED;
                         var brush = new SolidBrush(pixelColor);
+                        grid[j, i].IsChecked = false;
                         g.FillRectangle(brush, j * scale, i * scale, scale, scale);
                     }
                 }
