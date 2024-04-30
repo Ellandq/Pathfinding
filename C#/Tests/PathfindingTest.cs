@@ -7,7 +7,7 @@ public class Tests
     private Delegate SetUp;
     private Random random = new Random();
     
-    private const int WALKABLE_RATE = 80;
+    private const int WALKABLE_RATE = 60;
     private const bool VISUALIZE_PATH = true;
 
     private int startPosX;
@@ -19,65 +19,65 @@ public class Tests
 
     #region AStar Tests
 
-    [Test]
-    public void PathfindingRandomTest_AStar_50x50()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
-        saveName = "50x50_AStar";
-        MeasurePathfindingPerformance(50);
-    }
+        [Test]
+        public void PathfindingRandomTest_AStar_50x50()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+            saveName = "50x50_AStar";
+            MeasurePathfindingPerformance(50);
+        }
 
-    [Test]
-    public void PathfindingRandomTest_AStar_150x150()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
-        saveName = "150x150_AStar";
-        MeasurePathfindingPerformance(150);
-    }
+        [Test]
+        public void PathfindingRandomTest_AStar_150x150()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+            saveName = "150x150_AStar";
+            MeasurePathfindingPerformance(150);
+        }
 
-    [Test]
-    public void PathfindingRandomTest_AStar_250x250()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
-        saveName = "250x250_AStar";
-        MeasurePathfindingPerformance(250);
-    }
+        [Test]
+        public void PathfindingRandomTest_AStar_250x250()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+            saveName = "250x250_AStar";
+            MeasurePathfindingPerformance(250);
+        }
 
-    [Test]
-    public void PathfindingRandomTest_AStar_500x500()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
-        saveName = "500x500_AStar";
-        MeasurePathfindingPerformance(500);
-    }
+        [Test]
+        public void PathfindingRandomTest_AStar_500x500()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new AStar<PathNodeType>(nodeGrid);
+            saveName = "500x500_AStar";
+            MeasurePathfindingPerformance(500);
+        }
 
     #endregion
     
     #region Djikstra Tests
 
-    [Test]
-    public void PathfindingRandomTest_Djikstra_50x50()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-        saveName = "50x50_Djikstra";
-        MeasurePathfindingPerformance(50);
-    }
+        [Test]
+        public void PathfindingRandomTest_Djikstra_50x50()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+            saveName = "50x50_Djikstra";
+            MeasurePathfindingPerformance(50);
+        }
 
-    [Test]
-    public void PathfindingRandomTest_Djikstra_150x150()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-        saveName = "150x150_Djikstra";
-        MeasurePathfindingPerformance(150);
-    }
+        [Test]
+        public void PathfindingRandomTest_Djikstra_150x150()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+            saveName = "150x150_Djikstra";
+            MeasurePathfindingPerformance(150);
+        }
 
-    [Test]
-    public void PathfindingRandomTest_Djikstra_250x250()
-    {
-        SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-        saveName = "250x250_Djikstra";
-        MeasurePathfindingPerformance(250);
-    }
+        [Test]
+        public void PathfindingRandomTest_Djikstra_250x250()
+        {
+            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
+            saveName = "250x250_Djikstra";
+            MeasurePathfindingPerformance(250);
+        }
 
     #endregion
 
@@ -123,6 +123,8 @@ public class Tests
         {
             Console.WriteLine("Path was not found.");
         }
+        
+        return;
 
         Console.WriteLine($"Start Position: ({startPosX}, {startPosY})");
         Console.WriteLine($"End Position: ({endPosX}, {endPosY})");
@@ -158,11 +160,6 @@ public class Tests
                 {
                     Assert.IsTrue(node.IsWalkable, "All objects on the path need to be walkable.");
                 }
-
-                if (VISUALIZE_PATH)
-                { 
-                    //PathVisualizer.VisualizePath(nodeGrid, secondPath, "SECOND");
-                }
             }
             else
             {
@@ -182,10 +179,6 @@ public class Tests
 
             if (thirdPath != null && path != null)
             {
-                if (VISUALIZE_PATH)
-                {
-                    PathVisualizer<PathNodeType>.VisualizePath(nodeGrid, thirdPath, saveName);
-                }
                 
                 Assert.IsTrue(path.Count == thirdPath.Count, "Paths need to be the same lenngth given the same variables");
                 

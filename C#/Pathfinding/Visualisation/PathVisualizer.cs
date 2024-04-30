@@ -9,6 +9,7 @@ public class PathVisualizer<T> where T : PathNode
 {
     private static readonly Color BLOCKED = Color.FromArgb(0, 0, 0);      
     private static readonly Color WALKABLE = Color.FromArgb(200, 200, 200);    
+    private static readonly Color CHECKED = Color.FromArgb(200, 50, 50);    
     private static readonly Color PATH = Color.FromArgb(0, 188, 0);        
     private static readonly Color START = Color.FromArgb(128, 0, 128);    
     private static readonly Color END = Color.FromArgb(0, 0, 255);
@@ -38,16 +39,16 @@ public class PathVisualizer<T> where T : PathNode
         int size = grid.GetLength(0);
         string imagePath = Path.Combine(projectDirectory, $"{size}x{size}", $"C#_path_visualization_{msg}_{ticks}.jpg");
         
-        using (Bitmap bitmap = new Bitmap(cols * scale, rows * scale))
+        using (var bitmap = new Bitmap(cols * scale, rows * scale))
         {
-            using (Graphics g = Graphics.FromImage(bitmap))
+            using (var g = Graphics.FromImage(bitmap))
             {
-                for (int i = 0; i < rows; i++)
+                for (var i = 0; i < rows; i++)
                 {
-                    for (int j = 0; j < cols; j++)
+                    for (var j = 0; j < cols; j++)
                     {
-                        Color pixelColor = grid[i, j].IsWalkable ? WALKABLE : BLOCKED;
-                        SolidBrush brush = new SolidBrush(pixelColor);
+                        var pixelColor = grid[j, i].IsWalkable ? grid[j, i].IsChecked ? CHECKED : WALKABLE : BLOCKED;
+                        var brush = new SolidBrush(pixelColor);
                         g.FillRectangle(brush, j * scale, i * scale, scale, scale);
                     }
                 }
@@ -59,8 +60,7 @@ public class PathVisualizer<T> where T : PathNode
                     g.FillRectangle(brush, path[i].gridPosX * scale, path[i].gridPosY * scale, scale, scale);
                 }
             }
-
-            // Save the image to the Visualization folder
+            
             bitmap.Save(imagePath, ImageFormat.Jpeg);
         }
 

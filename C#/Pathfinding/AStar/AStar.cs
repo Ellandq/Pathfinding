@@ -16,12 +16,13 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
     public override List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
     {
         CheckedNodeCounter = 0;
-        T startNode = nodeGrid[startPosX, startPosY];
-        T endNode = nodeGrid[endPosX, endPosY];
         
-        List<T> openList = new List<T> { startNode };
-        List<T> closedList = new List<T>();
-        List<T> usedList = new List<T>();
+        var startNode = nodeGrid[startPosX, startPosY];
+        var endNode = nodeGrid[endPosX, endPosY];
+        
+        var openList = new List<T> { startNode };
+        var closedList = new List<T>();
+        var usedList = new List<T>();
         
         startNode.gCost = 0;
         startNode.hCost = CalculateDistanceCost(startNode.gridPosition, endNode.gridPosition);
@@ -29,21 +30,22 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
 
         while (openList.Count > 0)
         {
-            T node = GetLowestFCostNode(openList);
+            var node = GetLowestFCostNode(openList);
+            node.IsChecked = true;
             
             if (node == endNode){
                 CheckedNodeCounter = closedList.Count;
-                List<T> path = CalculatePath(node);
+                var path = CalculatePath(node);
                 ReinitalizeGrid(usedList);
                 return path;
             }
 
-            List<T> neighbourList = GetNeighbourList(node);
+            var neighbourList = GetNeighbourList(node);
             
             if (GetNeighbourList(node).Contains(endNode))
             {
                 CheckedNodeCounter = closedList.Count;
-                List<T> path = CalculatePath(node);
+                var path = CalculatePath(node);
                 ReinitalizeGrid(usedList);
                 return path;
             }
@@ -51,9 +53,8 @@ public class AStar<T> : Pathfinding<T> where T : PathNode
             openList.Remove(node);
             closedList.Add(node);
 
-            foreach (T neighbourNode in neighbourList)
+            foreach (var neighbourNode in neighbourList.Where(neighbourNode => !closedList.Contains(neighbourNode)))
             {
-                if (closedList.Contains(neighbourNode)) continue;
                 if (!neighbourNode.IsUsable && !usedList.Contains(neighbourNode)) usedList.Add(neighbourNode);
                 if (!neighbourNode.IsWalkable){
                     closedList.Add(neighbourNode);

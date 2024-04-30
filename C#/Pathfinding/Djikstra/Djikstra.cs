@@ -33,6 +33,7 @@ namespace Pathfinding.Djikstra
             while (openList.Count > 0)
             {
                 T node = GetLowestGCostNode(openList);
+                node.IsChecked = true;
 
                 if (node == endNode)
                 {

@@ -18,6 +18,7 @@ public class PathNode
     // A public property to set if a given Node should be accessible
     public bool IsWalkable { get; set; } = true;
     public bool IsUsable { get; set; } = true;
+    public bool IsChecked { get; set; } = false;
 
     public void Initialize(int x, int y)
     {
