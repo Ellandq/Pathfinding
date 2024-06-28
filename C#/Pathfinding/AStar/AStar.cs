@@ -11,19 +11,19 @@ namespace Pathfinding.AStar
             InitializeNodes(nodeGrid);
         }
 
-        public override List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
+        public override List<T?> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
         {
             CheckedNodeCounter = 0;
 
             var startNode = nodeGrid[startPosX, startPosY];
             var endNode = nodeGrid[endPosX, endPosY];
 
-            var openList = new HashSet<T> { startNode };
-            var closedList = new HashSet<T>();
-            var usedList = new HashSet<T>();
+            var openList = new HashSet<T?> { startNode };
+            var closedList = new HashSet<T?>();
+            var usedList = new HashSet<T?>();
 
-            startNode.gCost = 0;
-            startNode.hCost = CalculateDistanceCost(startNode.gridPosition, endNode.gridPosition);
+            startNode.GCost = 0;
+            startNode.HCost = CalculateDistanceCost(startNode.gridPosition, endNode.gridPosition);
             startNode.CalculateFCost();
 
             while (openList.Count > 0)
@@ -41,14 +41,6 @@ namespace Pathfinding.AStar
 
                 var neighbourList = GetNeighbourList(node);
 
-                if (neighbourList.Contains(endNode))
-                {
-                    CheckedNodeCounter = closedList.Count;
-                    var path = CalculatePath(node);
-                    ReinitalizeGrid(usedList);
-                    return path;
-                }
-
                 openList.Remove(node);
                 closedList.Add(node);
 
@@ -62,19 +54,17 @@ namespace Pathfinding.AStar
                         continue;
                     }
 
-                    int tentativeGCost = node.gCost + CalculateDistanceCost(node.gridPosition, neighbourNode.gridPosition);
-                    if (tentativeGCost < neighbourNode.gCost)
-                    {
-                        neighbourNode.cameFromNode = node;
-                        neighbourNode.gCost = tentativeGCost;
-                        neighbourNode.hCost = CalculateDistanceCost(neighbourNode.gridPosition, endNode.gridPosition);
-                        neighbourNode.CalculateFCost();
+                    var tentativeGCost = node.GCost + CalculateDistanceCost(node.gridPosition, neighbourNode.gridPosition);
+                    if (tentativeGCost >= neighbourNode.GCost) continue;
+                    neighbourNode.cameFromNode = node;
+                    neighbourNode.GCost = tentativeGCost;
+                    neighbourNode.HCost = CalculateDistanceCost(neighbourNode.gridPosition, endNode.gridPosition);
+                    neighbourNode.CalculateFCost();
 
-                        openList.Add(neighbourNode);
+                    openList.Add(neighbourNode);
 
-                        neighbourNode.IsUsable = false;
-                        usedList.Add(neighbourNode);
-                    }
+                    neighbourNode.IsUsable = false;
+                    usedList.Add(neighbourNode);
                 }
             }
             // Out of nodes on the map
@@ -83,16 +73,14 @@ namespace Pathfinding.AStar
             return null;
         }
 
-        private T GetLowestFCostNode(HashSet<T> pathNodeList)
+        private T? GetLowestFCostNode(HashSet<T?> pathNodeList)
         {
-            T lowestCostNode = null;
-            foreach (var node in pathNodeList)
+            T? lowestCostNode = null;
+            foreach (var node in pathNodeList.Where(node => node.IsWalkable && (lowestCostNode == null || node.FCost < lowestCostNode.FCost)))
             {
-                if (node.IsWalkable && (lowestCostNode == null || node.fCost < lowestCostNode.fCost))
-                {
-                    lowestCostNode = node;
-                }
+                lowestCostNode = node;
             }
+
             return lowestCostNode;
         }
     }

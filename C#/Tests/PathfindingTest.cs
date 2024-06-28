@@ -53,29 +53,29 @@ public class Tests
 
     #endregion
     
-    #region Djikstra Tests
+    #region Dijkstra Tests
 
         [Test]
-        public void PathfindingRandomTest_Djikstra_50x50()
+        public void PathfindingRandomTest_Dijkstra_50x50()
         {
-            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-            saveName = "50x50_Djikstra";
+            SetUp = (PathNodeType[,] nodeGrid) => new Dijkstra<PathNodeType>(nodeGrid);
+            saveName = "50x50_Dijkstra";
             MeasurePathfindingPerformance(50);
         }
 
         [Test]
-        public void PathfindingRandomTest_Djikstra_150x150()
+        public void PathfindingRandomTest_Dijkstra_150x150()
         {
-            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-            saveName = "150x150_Djikstra";
+            SetUp = (PathNodeType[,] nodeGrid) => new Dijkstra<PathNodeType>(nodeGrid);
+            saveName = "150x150_Dijkstra";
             MeasurePathfindingPerformance(150);
         }
 
         [Test]
-        public void PathfindingRandomTest_Djikstra_250x250()
+        public void PathfindingRandomTest_Dijkstra_250x250()
         {
-            SetUp = (PathNodeType[,] nodeGrid) => new Djikstra<PathNodeType>(nodeGrid);
-            saveName = "250x250_Djikstra";
+            SetUp = (PathNodeType[,] nodeGrid) => new Dijkstra<PathNodeType>(nodeGrid);
+            saveName = "250x250_Dijkstra";
             MeasurePathfindingPerformance(250);
         }
 
@@ -98,7 +98,7 @@ public class Tests
 
         SetUp.DynamicInvoke(nodeGrid);
     
-        List<PathNodeType> path = null;
+        List<PathNodeType?> path = null;
 
     
         var stopwatch = Stopwatch.StartNew();
@@ -111,7 +111,7 @@ public class Tests
         {
             foreach (var node in path)
             {
-                Assert.That(node.IsWalkable, Is.True, "All objects on the path need to be walkable.");
+                Assert.That(node.IsWalkable, Is.True, $"All objects on the path need to be walkable. {node.gridPosition}");
             }
         }
 
@@ -132,7 +132,7 @@ public class Tests
             var endPosX_02 = random.Next(0, gridSize);
             var endPosY_02 = random.Next(0, gridSize);
             
-            while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2 || !(nodeGrid[startPosX_02,startPosY_02].IsWalkable &&  nodeGrid[endPosX_02,endPosX_02].IsWalkable))
+            while ((startPosX == endPosX && startPosY == endPosY) || Math.Abs(startPosX - endPosX) + Math.Abs(startPosY - endPosY) <= 2 || !(nodeGrid[startPosX_02,startPosY_02].IsWalkable &&  nodeGrid[endPosX_02,endPosY_02].IsWalkable))
             {
                 startPosX_02 = random.Next(0, gridSize);
                 startPosY_02 = random.Next(0, gridSize);
@@ -150,7 +150,7 @@ public class Tests
 
             foreach (var node in secondPath)
             {
-                Assert.That(node.IsWalkable, Is.True, "All objects on the path need to be walkable.");
+                Assert.That(node.IsWalkable, Is.True, $"All objects on the path need to be walkable. {node.gridPosition}");
             }
             
             if (VISUALIZE_PATH)
@@ -172,7 +172,7 @@ public class Tests
             if (thirdPath != null && path != null)
             {
                 
-                Assert.That(path.Count, Is.EqualTo(thirdPath.Count), "Paths need to be the same lenngth given the same variables");
+                Assert.That(path.Count, Is.EqualTo(thirdPath.Count), "Paths need to be the same length given the same variables");
                 
                 
                 try
@@ -195,11 +195,11 @@ public class Tests
             }
             else if (thirdPath == null && path == null)
             {
-                Assert.Pass("Both paths are null");
+                Assert.Pass("Both paths are null.\n");
             }
             else
             {
-                Assert.Fail("Paths are different.");
+                Assert.Fail("Paths are different.\n");
             }
             
             Console.WriteLine($"Elapsed Time: {milliseconds} ms");
@@ -217,14 +217,13 @@ public class Tests
             for (var y = 0; y < nodeGrid.GetLength(1); y++)
             {
                 nodeGrid[x, y] = new PathNodeType();
-                if ((x == startPosX && y == startPosY) || (x == endPosX && y == endPosY) || random.Next(0, 100) < WALKABLE_RATE)
+                if (random.Next(0, 100) >= WALKABLE_RATE)
                 {
-                    nodeGrid[x, y].IsWalkable = true;
-                    continue;
+                    nodeGrid[x, y].IsWalkable = false;
                 }
-                
-                nodeGrid[x, y].IsWalkable = false;
             }
         }
+        nodeGrid[startPosX, startPosY].IsWalkable = true;
+        nodeGrid[endPosX, endPosY].IsWalkable = true;
     }
 }

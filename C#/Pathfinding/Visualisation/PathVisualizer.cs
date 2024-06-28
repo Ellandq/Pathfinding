@@ -7,37 +7,39 @@ namespace Pathfinding.Visualisation;
 
 public class PathVisualizer<T> where T : PathNode
 {
-    private static readonly Color BLOCKED = Color.FromArgb(0, 0, 0);      
-    private static readonly Color WALKABLE = Color.FromArgb(200, 200, 200);    
-    private static readonly Color CHECKED = Color.FromArgb(200, 50, 50);    
-    private static readonly Color PATH = Color.FromArgb(0, 188, 0);        
-    private static readonly Color START = Color.FromArgb(128, 0, 128);    
-    private static readonly Color END = Color.FromArgb(0, 0, 255);
+    private static readonly Color Blocked = Color.FromArgb(0, 0, 0);      
+    private static readonly Color Walkable = Color.FromArgb(200, 200, 200);    
+    private static readonly Color Checked = Color.FromArgb(200, 50, 50);    
+    private static readonly Color Path = Color.FromArgb(0, 188, 0);        
+    private static readonly Color Start = Color.FromArgb(128, 0, 128);    
+    private static readonly Color End = Color.FromArgb(0, 0, 255);
     
     public static void VisualizePath(T[,] grid, List<T> path, string msg = "")
     {
-        int rows = grid.GetLength(0);
-        int cols = grid.GetLength(1);
+        var rows = grid.GetLength(0);
+        var cols = grid.GetLength(1);
+        
+        Console.WriteLine(path[0].gridPosition + " " + path[^1].gridPosition);
 
         // Scaling factor for each node
-        int scale = 10;
+        const int scale = 10;
         
-        string currentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
+        var currentDirectory = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.Parent.FullName;
 
-        string projectDirectory = Path.Combine(currentDirectory, "Visualisations");
+        var projectDirectory = System.IO.Path.Combine(currentDirectory, "Visualisations");
 
         if (!Directory.Exists(projectDirectory))
         {
             Directory.CreateDirectory(projectDirectory);
-            Directory.CreateDirectory(Path.Combine(projectDirectory, "50x50"));
-            Directory.CreateDirectory(Path.Combine(projectDirectory, "150x150"));
-            Directory.CreateDirectory(Path.Combine(projectDirectory, "250x250"));
-            Directory.CreateDirectory(Path.Combine(projectDirectory, "500x500"));
+            Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, "50x50"));
+            Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, "150x150"));
+            Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, "250x250"));
+            Directory.CreateDirectory(System.IO.Path.Combine(projectDirectory, "500x500"));
         }
         
-        long ticks = DateTime.Now.Ticks;
-        int size = grid.GetLength(0);
-        string imagePath = Path.Combine(projectDirectory, $"{size}x{size}", $"C#_path_visualization_{msg}_{ticks}.jpg");
+        var ticks = DateTime.Now.Ticks;
+        var size = grid.GetLength(0);
+        var imagePath = System.IO.Path.Combine(projectDirectory, $"{size}x{size}", $"C#_path_visualization_{msg}_{ticks}.jpg");
         
         using (var bitmap = new Bitmap(cols * scale, rows * scale))
         {
@@ -47,18 +49,18 @@ public class PathVisualizer<T> where T : PathNode
                 {
                     for (var j = 0; j < cols; j++)
                     {
-                        var pixelColor = grid[j, i].IsWalkable ? grid[j, i].IsChecked ? CHECKED : WALKABLE : BLOCKED;
+                        var pixelColor = grid[j, i].IsWalkable ? grid[j, i].IsChecked ? Checked : Walkable : Blocked;
                         var brush = new SolidBrush(pixelColor);
                         grid[j, i].IsChecked = false;
                         g.FillRectangle(brush, j * scale, i * scale, scale, scale);
                     }
                 }
 
-                for (int i = 0; i < path.Count; i++)
+                for (var i = 0; i < path.Count; i++)
                 {
-                    Color pixelColor = i == 0 ? START : i == path.Count - 1 ? END : PATH;
-                    SolidBrush brush = new SolidBrush(pixelColor);
-                    g.FillRectangle(brush, path[i].gridPosX * scale, path[i].gridPosY * scale, scale, scale);
+                    var pixelColor = i == 0 ? Start : i == path.Count - 1 ? End : Path;
+                    var brush = new SolidBrush(pixelColor);
+                    g.FillRectangle(brush, path[i].GridPosX * scale, path[i].GridPosY * scale, scale, scale);
                 }
             }
             

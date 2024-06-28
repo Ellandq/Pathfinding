@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// Full repository can be found on : https://github.com/Ellandq/Pathfinding/tree/main/C%23/Pathfinding
+
 namespace Pathfinding
 {
     public class Pathfinding<T> where T : PathNode
@@ -16,7 +18,7 @@ namespace Pathfinding
 
         public int CheckedNodeCounter { get; protected set; }
 
-        public virtual List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
+        public virtual List<T?> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
         {
             Console.WriteLine("Pathfinding algorithm not chosen.");
             return null;
@@ -26,9 +28,9 @@ namespace Pathfinding
         {
             this.nodeGrid = nodeGrid;
 
-            for (int x = 0; x < nodeGrid.GetLength(0); x++)
+            for (var x = 0; x < nodeGrid.GetLength(0); x++)
             {
-                for (int y = 0; y < nodeGrid.GetLength(1); y++)
+                for (var y = 0; y < nodeGrid.GetLength(1); y++)
                 {
                     this.nodeGrid[x, y].Initialize(x, y);
                 }
@@ -39,40 +41,39 @@ namespace Pathfinding
         {
             var neighbourList = new HashSet<T>();
 
-            if (currentNode.gridPosX - 1 >= 0)
+            if (currentNode.GridPosX - 1 >= 0)
             {
                 // Left
-                neighbourList.Add(nodeGrid[currentNode.gridPosX - 1, currentNode.gridPosY]);
+                neighbourList.Add(nodeGrid[currentNode.GridPosX - 1, currentNode.GridPosY]);
                 // Left Down
-                if (currentNode.gridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.gridPosX - 1, currentNode.gridPosY - 1]);
+                if (currentNode.GridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.GridPosX - 1, currentNode.GridPosY - 1]);
                 // Left Up
-                if (currentNode.gridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.gridPosX - 1, currentNode.gridPosY + 1]);
+                if (currentNode.GridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.GridPosX - 1, currentNode.GridPosY + 1]);
             }
-            if (currentNode.gridPosX + 1 < nodeGrid.GetLength(0))
+            if (currentNode.GridPosX + 1 < nodeGrid.GetLength(0))
             {
                 // Right
-                neighbourList.Add(nodeGrid[currentNode.gridPosX + 1, currentNode.gridPosY]);
+                neighbourList.Add(nodeGrid[currentNode.GridPosX + 1, currentNode.GridPosY]);
                 // Right Down
-                if (currentNode.gridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.gridPosX + 1, currentNode.gridPosY - 1]);
+                if (currentNode.GridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.GridPosX + 1, currentNode.GridPosY - 1]);
                 // Right Up
-                if (currentNode.gridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.gridPosX + 1, currentNode.gridPosY + 1]);
+                if (currentNode.GridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.GridPosX + 1, currentNode.GridPosY + 1]);
             }
-            if (currentNode.gridPosX - 1 >= 0)
+            if (currentNode.GridPosX - 1 >= 0)
             {
                 // Down
-                if (currentNode.gridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.gridPosX, currentNode.gridPosY - 1]);
+                if (currentNode.GridPosY - 1 >= 0) neighbourList.Add(nodeGrid[currentNode.GridPosX, currentNode.GridPosY - 1]);
                 // Up
-                if (currentNode.gridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.gridPosX, currentNode.gridPosY + 1]);
+                if (currentNode.GridPosY + 1 < nodeGrid.GetLength(1)) neighbourList.Add(nodeGrid[currentNode.GridPosX, currentNode.GridPosY + 1]);
             }
 
             return neighbourList;
         }
 
-        protected List<T> CalculatePath(T endNode)
+        protected List<T?> CalculatePath(T? endNode)
         {
-            var path = new List<T>();
+            var path = new List<T?> { endNode };
 
-            path.Add(endNode);
             var currentNode = endNode;
 
             while (currentNode.cameFromNode != null)
@@ -81,15 +82,17 @@ namespace Pathfinding
                 currentNode = currentNode.cameFromNode as T;
             }
 
+            path.Reverse();
+            
             return path;
         }
 
         // Calculates a rough estimate of the distance between two positions 
         protected int CalculateDistanceCost(Tuple<int, int> a, Tuple<int, int> b)
         {
-            int xDistance = Math.Abs(a.Item1 - b.Item1);
-            int yDistance = Math.Abs(a.Item2 - b.Item2);
-            int remaining = Math.Abs(xDistance - yDistance);
+            var xDistance = Math.Abs(a.Item1 - b.Item1);
+            var yDistance = Math.Abs(a.Item2 - b.Item2);
+            var remaining = Math.Abs(xDistance - yDistance);
             return MOVE_DIAGONAL_COST * Math.Min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
         }
 

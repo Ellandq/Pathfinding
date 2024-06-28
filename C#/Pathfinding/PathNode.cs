@@ -4,16 +4,16 @@ namespace Pathfinding;
 
 public class PathNode
 {
-    public PathNode cameFromNode = null; // Reference to the previous node in the search
+    public PathNode? cameFromNode = null; // Reference to the previous node in the search
 
     public Tuple<int, int> gridPosition { get; private set;  }
 
-    public int gridPosX { get { return gridPosition.Item1; } }
-    public int gridPosY { get { return gridPosition.Item2; } }
+    public int GridPosX { get { return gridPosition.Item1; } }
+    public int GridPosY { get { return gridPosition.Item2; } }
     
-    public int gCost = 999999; // Walking cost from start node
-    public int hCost = 0; // Heuristic cost to reach end node
-    public int fCost = 0; // G cost + H cost
+    public int GCost = 999999; // Walking cost from start node
+    public int HCost = 0; // Heuristic cost to reach end node
+    public int FCost = 0; // G cost + H cost
     
     // A public property to set if a given Node should be accessible
     public bool IsWalkable { get; set; } = true;
@@ -28,7 +28,7 @@ public class PathNode
     
     public void Initialize()
     {
-        gCost = 999999;
+        GCost = 999999;
         cameFromNode = null;
         CalculateFCost();
         IsUsable = true;
@@ -36,10 +36,10 @@ public class PathNode
     
     public void CalculateFCost()
     {
-        fCost = gCost + hCost;
+        FCost = GCost + HCost;
     }
 
-    public static bool operator ==(PathNode a, PathNode b)
+    public static bool operator ==(PathNode? a, PathNode? b)
     {
         if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
         {
@@ -53,7 +53,7 @@ public class PathNode
         return a.gridPosition.Equals(b.gridPosition);
     }
 
-    public static bool operator !=(PathNode a, PathNode b)
+    public static bool operator !=(PathNode? a, PathNode b)
     {
         if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
         {

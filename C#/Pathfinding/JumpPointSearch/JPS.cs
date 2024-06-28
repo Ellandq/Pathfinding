@@ -4,7 +4,7 @@ public class JPS<T> : Pathfinding<T> where T : PathNode
 {
     // TODO
 
-    public override List<T> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
+    public override List<T?> FindPath(int startPosX, int startPosY, int endPosX, int endPosY)
     {
         // TODO
         return base.FindPath(startPosX, startPosY, endPosX, endPosY);
